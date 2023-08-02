@@ -1,0 +1,37 @@
+package cn.bobasyu.springframework.factory.support;
+
+import cn.bobasyu.springframework.BeanFactory;
+import cn.bobasyu.springframework.BeansException;
+import cn.bobasyu.springframework.factory.factory.BeanDefinition;
+
+/**
+ * Bean工厂的抽象类，使用默认的单例实现获取Bean对象，申明了创建Bean对象和获取Bean类型的方法
+ */
+public abstract class AbstractBeanFactory extends DefaultSingletonBeanRegistry implements BeanFactory {
+    @Override
+    public Object getBean(String name) throws BeansException {
+        Object bean = getSingleton(name);
+        if (bean != null) {
+            return bean;
+        }
+        BeanDefinition beanDefinition = getBeanDefinition(name);
+        return createBean(name, beanDefinition);
+    }
+
+    /**
+     *  创建Bean对象，在获取Bean的方法getBean中被调用，当容器中没有相应的Bean时，使用该方法创建Bean实例对象
+     * @param name Bean对象名称
+     * @param beanDefinition Bean对象的相关信息
+     * @return Bean对象的实例
+     * @throws BeansException Bean对象创建失败，即Bean对象实例化时出现的异常
+     */
+    protected abstract Object createBean(String name, BeanDefinition beanDefinition) throws BeansException;
+
+    /**
+     * 获取Bean相关信息，在创建Bean对象时调用，通过该方法获取Bean信息并根据该信息创建Bean对象
+     * @param name Bean对象名称
+     * @return Bean相关信息
+     * @throws BeansException 无法获取Bean对象的信息时抛出异常
+     */
+    protected abstract BeanDefinition getBeanDefinition(String name) throws BeansException;
+}

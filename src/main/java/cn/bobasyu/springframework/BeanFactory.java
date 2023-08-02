@@ -1,23 +1,8 @@
 package cn.bobasyu.springframework;
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
 /**
- * Bean对象的工厂
+ * Bean对象的工厂接口，声明了从工厂获得Bean对象的方法
  */
-public class BeanFactory {
-    private Map<String, BeanDefinition> beanDefinitionMap;
-
-    public BeanFactory() {
-        this.beanDefinitionMap = new ConcurrentHashMap<>();
-    }
-
-    public void registerBeanDefinition(String name, BeanDefinition beanDefinition) {
-        beanDefinitionMap.put(name, beanDefinition);
-    }
-
-    public Object getBean(String name) {
-        return beanDefinitionMap.get(name).getBean();
-    }
+public interface BeanFactory {
+    Object getBean(String name) throws BeansException;
 }
