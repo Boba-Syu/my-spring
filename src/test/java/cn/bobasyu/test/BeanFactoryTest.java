@@ -7,12 +7,18 @@ import cn.bobasyu.springframework.beans.PropertyValues;
 import cn.bobasyu.springframework.beans.factory.config.BeanDefinition;
 import cn.bobasyu.springframework.beans.factory.config.BeanReference;
 import cn.bobasyu.springframework.beans.factory.support.DefaultListableBeanFactory;
+import cn.bobasyu.springframework.core.io.DefaultResourceLoader;
+import cn.bobasyu.springframework.core.io.Resource;
+import cn.bobasyu.springframework.core.io.ResourceLoader;
 import cn.bobasyu.test.bean.User;
 import cn.bobasyu.test.bean.User2;
 import cn.bobasyu.test.mapper.UserMapper;
 import cn.bobasyu.test.service.UserService;
 import org.junit.Assert;
 import org.junit.Test;
+
+import java.io.IOException;
+import java.io.InputStream;
 
 public class BeanFactoryTest {
     @Test
@@ -58,4 +64,5 @@ public class BeanFactoryTest {
         UserService userService = (UserService) beanFactory.getBean("userService");
         userService.query();
     }
+
 }

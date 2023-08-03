@@ -4,6 +4,8 @@ import cn.bobasyu.springframework.beans.factory.BeanFactory;
 import cn.bobasyu.springframework.beans.factory.config.BeanDefinition;
 import cn.bobasyu.springframework.beans.BeansException;
 
+import java.util.Optional;
+
 /**
  * Bean工厂的抽象类，使用默认的单例实现获取Bean对象，申明了创建Bean对象和获取Bean类型的方法
  */
@@ -20,7 +22,12 @@ public abstract class AbstractBeanFactory extends DefaultSingletonBeanRegistry i
 
     @Override
     public Object getBean(String name) throws BeansException {
-        return getBean(name, null);
+        return getBean(name, Optional.empty());
+    }
+
+    @Override
+    public <T> T getBean(String name, Class<T> requiredType) throws BeansException {
+        return (T) getBean(name);
     }
 
     /**
