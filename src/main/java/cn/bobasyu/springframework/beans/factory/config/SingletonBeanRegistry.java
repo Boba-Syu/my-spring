@@ -1,4 +1,4 @@
-package cn.bobasyu.springframework.factory.factory;
+package cn.bobasyu.springframework.beans.factory.config;
 
 /**
  * Bean元素的单例注册接口，声明了获取单例Bean对象的方法

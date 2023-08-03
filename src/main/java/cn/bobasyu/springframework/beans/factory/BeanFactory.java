@@ -1,6 +1,6 @@
-package cn.bobasyu.springframework.factory;
+package cn.bobasyu.springframework.beans.factory;
 
-import cn.bobasyu.springframework.BeansException;
+import cn.bobasyu.springframework.beans.BeansException;
 
 /**
  * Bean对象的工厂接口，声明了从工厂获得Bean对象的方法

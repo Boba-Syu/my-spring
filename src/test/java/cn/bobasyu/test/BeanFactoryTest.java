@@ -1,11 +1,16 @@
 package cn.bobasyu.test;
 
 
-import cn.bobasyu.springframework.BeansException;
-import cn.bobasyu.springframework.factory.factory.BeanDefinition;
-import cn.bobasyu.springframework.factory.support.DefaultListableBeanFactory;
+import cn.bobasyu.springframework.beans.BeansException;
+import cn.bobasyu.springframework.beans.PropertyValue;
+import cn.bobasyu.springframework.beans.PropertyValues;
+import cn.bobasyu.springframework.beans.factory.config.BeanDefinition;
+import cn.bobasyu.springframework.beans.factory.config.BeanReference;
+import cn.bobasyu.springframework.beans.factory.support.DefaultListableBeanFactory;
 import cn.bobasyu.test.bean.User;
 import cn.bobasyu.test.bean.User2;
+import cn.bobasyu.test.mapper.UserMapper;
+import cn.bobasyu.test.service.UserService;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -36,5 +41,21 @@ public class BeanFactoryTest {
         // 获取bean
         User2 user = (User2) beanFactory.getBean("user2", "hello");
         user.hello();
+    }
+
+    @Test
+    public void beanFactoryTest3() throws BeansException {
+        DefaultListableBeanFactory beanFactory = new DefaultListableBeanFactory();
+        beanFactory.registerBeanDefinition("userMapper", new BeanDefinition(UserMapper.class));
+        // 设置属性
+        PropertyValues propertyValues = new PropertyValues();
+        propertyValues.addPropertyValue(new PropertyValue("uId", "1"));
+        propertyValues.addPropertyValue(new PropertyValue("userMapper", new BeanReference("userMapper")));
+        // 注入Bean
+        BeanDefinition beanDefinition = new BeanDefinition(UserService.class, propertyValues);
+        beanFactory.registerBeanDefinition("userService", beanDefinition);
+        // 获取Bean
+        UserService userService = (UserService) beanFactory.getBean("userService");
+        userService.query();
     }
 }

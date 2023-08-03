@@ -1,4 +1,4 @@
-package cn.bobasyu.springframework;
+package cn.bobasyu.springframework.beans;
 
 public class BeansException extends Exception {
     public BeansException(String msg) {

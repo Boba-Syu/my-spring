@@ -1,6 +1,6 @@
-package cn.bobasyu.springframework.factory.support;
+package cn.bobasyu.springframework.beans.factory.support;
 
-import cn.bobasyu.springframework.factory.factory.SingletonBeanRegistry;
+import cn.bobasyu.springframework.beans.factory.config.SingletonBeanRegistry;
 
 import java.util.HashMap;
 import java.util.Map;

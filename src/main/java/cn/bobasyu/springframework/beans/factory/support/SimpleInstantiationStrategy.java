@@ -1,7 +1,7 @@
-package cn.bobasyu.springframework.factory.support;
+package cn.bobasyu.springframework.beans.factory.support;
 
-import cn.bobasyu.springframework.BeansException;
-import cn.bobasyu.springframework.factory.factory.BeanDefinition;
+import cn.bobasyu.springframework.beans.BeansException;
+import cn.bobasyu.springframework.beans.factory.config.BeanDefinition;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;

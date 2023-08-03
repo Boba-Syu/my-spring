@@ -1,8 +1,8 @@
-package cn.bobasyu.springframework.factory.support;
+package cn.bobasyu.springframework.beans.factory.support;
 
-import cn.bobasyu.springframework.factory.BeanFactory;
-import cn.bobasyu.springframework.BeansException;
-import cn.bobasyu.springframework.factory.factory.BeanDefinition;
+import cn.bobasyu.springframework.beans.factory.BeanFactory;
+import cn.bobasyu.springframework.beans.factory.config.BeanDefinition;
+import cn.bobasyu.springframework.beans.BeansException;
 
 /**
  * Bean工厂的抽象类，使用默认的单例实现获取Bean对象，申明了创建Bean对象和获取Bean类型的方法

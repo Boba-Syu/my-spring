@@ -1,6 +1,6 @@
-package cn.bobasyu.springframework.factory.support;
+package cn.bobasyu.springframework.beans.factory.support;
 
-import cn.bobasyu.springframework.factory.factory.BeanDefinition;
+import cn.bobasyu.springframework.beans.factory.config.BeanDefinition;
 
 /**
  * 注册Bean的接口，申明了根据Bean名称和类型创建Bean对象的方法
