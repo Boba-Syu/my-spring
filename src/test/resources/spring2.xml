@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans>
+
+    <bean id="userMapper" class="cn.bobasyu.test.mapper.UserMapper"/>
+
+    <bean id="userService" class="cn.bobasyu.test.service.UserService">
+        <property name="uId" value="1"/>
+        <property name="company" value="腾讯"/>
+        <property name="location" value="深圳"/>
+        <property name="userMapper" ref="userMapper"/>
+    </bean>
+
+</beans>
