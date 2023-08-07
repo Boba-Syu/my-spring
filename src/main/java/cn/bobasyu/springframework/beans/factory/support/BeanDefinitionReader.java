@@ -44,4 +44,12 @@ public interface BeanDefinitionReader {
      */
     void loadBeanDefinitions(String location) throws BeansException;
 
+    /**
+     * 通过多个资源地址来进行加载BeanDefinition
+     *
+     * @param locations 地址信息，通过该地址得到对应的文件资源信息
+     * @throws BeansException
+     */
+    void loadBeanDefinitions(String... locations) throws BeansException;
+
 }

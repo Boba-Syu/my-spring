@@ -10,4 +10,11 @@ import cn.bobasyu.springframework.beans.factory.config.ConfigurableBeanFactory;
  */
 public interface ConfigurableListableBeanFactory extends ListableBeanFactory, AutowireCapableBeanFactory, ConfigurableBeanFactory {
     BeanDefinition getBeanDefinition(String beanName) throws BeansException;
+
+    /**
+     * 提前实例化单例对象
+     *
+     * @throws BeansException
+     */
+    void preInstantiateSingletons() throws BeansException;
 }

@@ -3,8 +3,7 @@ package cn.bobasyu.springframework.beans.factory.support;
 import cn.bobasyu.springframework.beans.BeansException;
 import cn.bobasyu.springframework.beans.PropertyValue;
 import cn.bobasyu.springframework.beans.PropertyValues;
-import cn.bobasyu.springframework.beans.factory.config.BeanDefinition;
-import cn.bobasyu.springframework.beans.factory.config.BeanReference;
+import cn.bobasyu.springframework.beans.factory.config.*;
 import cn.hutool.core.bean.BeanUtil;
 
 import java.lang.reflect.Constructor;
@@ -12,7 +11,7 @@ import java.lang.reflect.Constructor;
 /**
  * 自动生成Bean的抽象类，实现了创建Bean方法
  */
-public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFactory {
+public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFactory implements AutowireCapableBeanFactory {
     /**
      * Bean对象的实例化策略，这里使用的是Cglib实例化的实现
      */
@@ -25,11 +24,57 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
             bean = createBeanInstance(beanDefinition, name, args);
             // 填充属性
             applyPropertyValues(name, bean, beanDefinition);
+            // 执行 Bean 的初始化方法和 BeanPostProcessor 的前置和后置处理方法
+            bean = initializeBean(name, bean, beanDefinition);
         } catch (Exception e) {
             throw new BeansException("Instantiation of bean failed");
         }
         addSingleton(name, bean);
         return bean;
+    }
+
+    /**
+     * 执行 Bean 的初始化方法和 BeanPostProcessor 的前置和后置处理方法
+     *
+     * @param name
+     * @param bean
+     * @param beanDefinition
+     * @return
+     */
+    private Object initializeBean(String name, Object bean, BeanDefinition beanDefinition) throws BeansException {
+        // 执行前置操作
+        Object wrappedBean = applyBeanPostProcessorsBeforeInitialization(bean, name);
+        // TODO
+        invokeInitMethods(name, wrappedBean, beanDefinition);
+        // 执行后置操作
+        wrappedBean = applyBeanPostProcessorsAfterInitialization(bean, name);
+        return wrappedBean;
+    }
+
+    private void invokeInitMethods(String name, Object wrappedBean, BeanDefinition beanDefinition) {
+
+    }
+
+    @Override
+    public Object applyBeanPostProcessorsBeforeInitialization(Object existingBean, String beanName) throws BeansException {
+        Object result = existingBean;
+        for (BeanPostProcessor processor : getBeanPostProcessors()) {
+            Object current = processor.postProcessBeforeInitialization(result, beanName);
+            if (current == null) return result;
+            result = current;
+        }
+        return result;
+    }
+
+    @Override
+    public Object applyBeanPostProcessorsAfterInitialization(Object existingBean, String beanName) throws BeansException {
+        Object result = existingBean;
+        for (BeanPostProcessor processor : getBeanPostProcessors()) {
+            Object current = processor.postProcessAfterInitialization(result, beanName);
+            if (current == null) return result;
+            result = current;
+        }
+        return result;
     }
 
     /**
@@ -77,7 +122,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
                 BeanUtil.setFieldValue(bean, propertyName, value);
             }
         } catch (Exception e) {
-            throw new BeansException("Error seeting property values: " + beanName, e);
+            throw new BeansException("Error setting property values: " + beanName, e);
         }
     }
 }

@@ -1,15 +1,20 @@
 package cn.bobasyu.springframework.beans.factory.support;
 
-import cn.bobasyu.springframework.beans.factory.BeanFactory;
 import cn.bobasyu.springframework.beans.factory.config.BeanDefinition;
 import cn.bobasyu.springframework.beans.BeansException;
+import cn.bobasyu.springframework.beans.factory.config.BeanPostProcessor;
+import cn.bobasyu.springframework.beans.factory.config.ConfigurableBeanFactory;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 /**
  * Bean工厂的抽象类，使用默认的单例实现获取Bean对象，申明了创建Bean对象和获取Bean类型的方法
  */
-public abstract class AbstractBeanFactory extends DefaultSingletonBeanRegistry implements BeanFactory {
+public abstract class AbstractBeanFactory extends DefaultSingletonBeanRegistry implements ConfigurableBeanFactory {
+    private final List<BeanPostProcessor> beanPostProcessors = new ArrayList<>();
+
     @Override
     public Object getBean(String name, Object... args) throws BeansException {
         Object bean = getSingleton(name);
@@ -48,4 +53,14 @@ public abstract class AbstractBeanFactory extends DefaultSingletonBeanRegistry i
      * @throws BeansException 无法获取Bean对象的信息时抛出异常
      */
     protected abstract BeanDefinition getBeanDefinition(String name) throws BeansException;
+
+    @Override
+    public void addBeanPostProcessor(BeanPostProcessor beanPostProcessor) {
+        this.beanPostProcessors.remove(beanPostProcessor);
+        this.beanPostProcessors.add(beanPostProcessor);
+    }
+
+    public List<BeanPostProcessor> getBeanPostProcessors() {
+        return beanPostProcessors;
+    }
 }
