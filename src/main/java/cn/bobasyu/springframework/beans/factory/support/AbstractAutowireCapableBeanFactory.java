@@ -3,10 +3,11 @@ package cn.bobasyu.springframework.beans.factory.support;
 import cn.bobasyu.springframework.beans.BeansException;
 import cn.bobasyu.springframework.beans.PropertyValue;
 import cn.bobasyu.springframework.beans.PropertyValues;
-import cn.bobasyu.springframework.beans.factory.DisposableBean;
-import cn.bobasyu.springframework.beans.factory.InitializingBean;
+import cn.bobasyu.springframework.beans.factory.*;
 import cn.bobasyu.springframework.beans.factory.config.*;
+import cn.bobasyu.springframework.util.ClassUtils;
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.util.ClassUtil;
 import cn.hutool.core.util.StrUtil;
 
 import java.lang.reflect.Constructor;
@@ -16,6 +17,7 @@ import java.lang.reflect.Method;
  * 自动生成Bean的抽象类，实现了创建Bean方法
  */
 public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFactory implements AutowireCapableBeanFactory {
+    private ClassLoader beanClassLoader = ClassUtils.getDefaultClassLoader();
     /**
      * Bean对象的实例化策略，这里使用的是Cglib实例化的实现
      */
@@ -62,6 +64,18 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
      * @return
      */
     private Object initializeBean(String name, Object bean, BeanDefinition beanDefinition) throws BeansException {
+        // 执行Aware感知相关操作，处理实现了Aware接口的类
+        if (bean instanceof Aware) {
+            if (bean instanceof BeanFactoryAware) {
+                ((BeanFactoryAware) bean).setBeanFactory(this);
+            }
+            if (bean instanceof BeanClassLoaderAware) {
+                ((BeanClassLoaderAware) bean).setBeanClassLoaderAware(getBeanClassLoader());
+            }
+            if (bean instanceof BeanNameAware) {
+                ((BeanNameAware) bean).setBeanName(name);
+            }
+        }
         // 执行前置操作
         Object wrappedBean = applyBeanPostProcessorsBeforeInitialization(bean, name);
         // 执行Bean初始化方法
@@ -73,6 +87,10 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
         // 执行后置操作
         wrappedBean = applyBeanPostProcessorsAfterInitialization(bean, name);
         return wrappedBean;
+    }
+
+    private ClassLoader getBeanClassLoader() {
+        return this.beanClassLoader;
     }
 
     private void invokeInitMethods(String name, Object bean, BeanDefinition beanDefinition) throws Exception {
