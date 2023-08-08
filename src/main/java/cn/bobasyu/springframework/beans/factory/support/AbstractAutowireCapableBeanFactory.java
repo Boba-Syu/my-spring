@@ -37,7 +37,10 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
         }
         // 注册销毁方法
         registerDisposableBeanIfNecessary(name, bean, beanDefinition);
-        addSingleton(name, bean);
+        // 单例模式则将Bean对象加到内存中，原型模式则不进行该操作，每次都生成新对象
+        if (beanDefinition.isSingleton()) {
+            addSingleton(name, bean);
+        }
         return bean;
     }
 
@@ -49,6 +52,9 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
      * @param beanDefinition Bean的相关配置信息，在该方法中主要用于寻找配置中的Bean销毁方法
      */
     private void registerDisposableBeanIfNecessary(String name, Object bean, BeanDefinition beanDefinition) {
+        // 非单例模式类型的Bean不执行销毁方法
+        if (!beanDefinition.isSingleton())
+            return;
         if (bean instanceof DisposableBean || StrUtil.isNotEmpty(beanDefinition.getDestroyMethodName())) {
             registerDisposableBean(name, new DisposableBeanAdapter(bean, name, beanDefinition));
         }

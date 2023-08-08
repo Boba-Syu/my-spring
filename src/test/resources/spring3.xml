@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans>
+    <bean id="userService2" class="cn.bobasyu.test.service.UserService2" scope="prototype">
+        <property name="uId" value="1"/>
+        <property name="company" value="腾讯"/>
+        <property name="location" value="深圳"/>
+        <property name="userMapper" ref="proxyUserMapper"/>
+    </bean>
+
+    <bean id="proxyUserMapper" class="cn.bobasyu.test.factory.ProxyBeanFactory"/>
+</beans>

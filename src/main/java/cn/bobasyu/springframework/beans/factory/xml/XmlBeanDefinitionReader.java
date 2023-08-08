@@ -21,6 +21,7 @@ import java.io.InputStream;
  * BeanDefinition的xml加载实现，从xml文件中加载BeanDefinition信息
  */
 public class XmlBeanDefinitionReader extends AbstractBeanDefinitionReader {
+
     public XmlBeanDefinitionReader(BeanDefinitionRegistry registry) {
         super(registry);
     }
@@ -86,6 +87,7 @@ public class XmlBeanDefinitionReader extends AbstractBeanDefinitionReader {
             String className = bean.getAttribute("class");
             String initMethod = bean.getAttribute("init-method");
             String destroyMethodName = bean.getAttribute("destroy-method");
+            String scope = bean.getAttribute("scope");
             Class<?> clazz = Class.forName(className);
             // Bean名称
             String beanName = StrUtil.isNotEmpty(id) ? id : name;
@@ -96,6 +98,9 @@ public class XmlBeanDefinitionReader extends AbstractBeanDefinitionReader {
             BeanDefinition beanDefinition = new BeanDefinition(clazz);
             beanDefinition.setInitMethodName(initMethod);
             beanDefinition.setDestroyMethodName(destroyMethodName);
+            if (StrUtil.isNotEmpty(scope)) {
+                beanDefinition.setScope(scope);
+            }
 
             // 读取属性并填充进BeanDefinition中
             for (int j = 0; j < bean.getChildNodes().getLength(); ++j) {
