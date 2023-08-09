@@ -2,6 +2,7 @@ package cn.bobasyu.springframework.beans.factory.config;
 
 
 import cn.bobasyu.springframework.beans.BeansException;
+import cn.bobasyu.springframework.context.event.ApplicationEventMulticaster;
 
 /**
  * Bean元素的单例注册接口，声明了获取单例Bean对象的方法
@@ -19,4 +20,6 @@ public interface SingletonBeanRegistry {
      * 单例对象销毁方法
      */
     void destroySingletons() throws BeansException;
+
+    void registerSingleton(String beanName, Object singletonObject);
 }

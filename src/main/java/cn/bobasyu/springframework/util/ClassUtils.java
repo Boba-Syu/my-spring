@@ -5,8 +5,7 @@ public class ClassUtils {
         ClassLoader cl = null;
         try {
             cl = Thread.currentThread().getContextClassLoader();
-        }
-        catch (Throwable ex) {
+        } catch (Throwable ex) {
             // Cannot access thread context ClassLoader - falling back to system class loader...
         }
         if (cl == null) {
@@ -15,4 +14,25 @@ public class ClassUtils {
         }
         return cl;
     }
+
+    /**
+     * 判断器是否为Cglib代理生成的类
+     *
+     * @param clazz 类的类型
+     * @return
+     */
+    public static boolean isCglibProxyClass(Class<?> clazz) {
+        return (clazz != null && isCglibProxyClassName(clazz.getName()));
+    }
+
+    /**
+     * 判断器是否为Cglib代理生成的类
+     *
+     * @param className 类的名字
+     * @return
+     */
+    public static boolean isCglibProxyClassName(String className) {
+        return (className != null && className.contains("$$"));
+    }
+
 }
