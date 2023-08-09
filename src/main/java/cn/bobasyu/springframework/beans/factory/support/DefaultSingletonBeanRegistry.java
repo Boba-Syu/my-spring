@@ -46,9 +46,6 @@ public class DefaultSingletonBeanRegistry implements SingletonBeanRegistry {
         this.singletonObjects.put(beanName, singletonObject);
     }
 
-    protected void addSingleton(String beanName, Object singletonObject) {
-        singletonObjects.put(beanName, singletonObject);
-    }
 
     /**
      * 注册Bean销毁方法到容器中

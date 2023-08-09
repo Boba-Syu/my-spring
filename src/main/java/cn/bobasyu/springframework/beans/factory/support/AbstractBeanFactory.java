@@ -17,26 +17,30 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
     private final List<BeanPostProcessor> beanPostProcessors = new ArrayList<>();
 
     @Override
-    public Object getBean(String name, Object... args) throws BeansException {
-        Object sharedInstance = getSingleton(name);
-        if (sharedInstance != null) {
-            // 如果是FactoryBean，则需要调用调用getObject方法生产相应对象
-            return getObjectForBeanInstance(sharedInstance, name);
-        }
-        BeanDefinition beanDefinition = getBeanDefinition(name);
-        Object bean = createBean(name, beanDefinition, args);
-        // 同上，如果是FactoryBean，则需要调用调用getObject方法生产相应对象
-        return getObjectForBeanInstance(bean, name);
+    public Object getBean(String name) throws BeansException {
+        return doGetBean(name, null);
     }
 
     @Override
-    public Object getBean(String name) throws BeansException {
-        return getBean(name, Optional.empty());
+    public Object getBean(String name, Object... args) throws BeansException {
+        return doGetBean(name, args);
     }
 
     @Override
     public <T> T getBean(String name, Class<T> requiredType) throws BeansException {
         return (T) getBean(name);
+    }
+
+    protected <T> T doGetBean(final String name, final Object[] args) throws BeansException {
+        Object sharedInstance = getSingleton(name);
+        if (sharedInstance != null) {
+            // 如果是 FactoryBean，则需要调用 FactoryBean#getObject
+            return (T) getObjectForBeanInstance(sharedInstance, name);
+        }
+
+        BeanDefinition beanDefinition = getBeanDefinition(name);
+        Object bean = createBean(name, beanDefinition, args);
+        return (T) getObjectForBeanInstance(bean, name);
     }
 
     /**

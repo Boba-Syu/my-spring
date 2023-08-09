@@ -12,6 +12,7 @@ import cn.hutool.core.util.StrUtil;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
+import java.util.Optional;
 
 /**
  * 自动生成Bean的抽象类，实现了创建Bean方法
@@ -27,6 +28,12 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
     protected Object createBean(String name, BeanDefinition beanDefinition, Object[] args) throws BeansException {
         Object bean = null;
         try {
+            // 判断是否返回代理 Bean 对象
+            bean = resolveBeforeInstantiation(name, beanDefinition);
+            if (bean != null) {
+                return bean;
+            }
+            // 实例化Bean
             bean = createBeanInstance(beanDefinition, name, args);
             // 填充属性
             applyPropertyValues(name, bean, beanDefinition);
@@ -39,9 +46,44 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
         registerDisposableBeanIfNecessary(name, bean, beanDefinition);
         // 单例模式则将Bean对象加到内存中，原型模式则不进行该操作，每次都生成新对象
         if (beanDefinition.isSingleton()) {
-            addSingleton(name, bean);
+            registerSingleton(name, bean);
         }
         return bean;
+    }
+
+    /**
+     * Bean初始化前执行，如果需要生成代理对象，则返回代理对象，否则返回null
+     *
+     * @param beanName
+     * @param beanDefinition
+     * @return
+     * @throws BeansException
+     */
+    private Object resolveBeforeInstantiation(String beanName, BeanDefinition beanDefinition) throws BeansException {
+        Object bean = applyBeanPostProcessorsBeforeInstantiation(beanDefinition.getBeanClass(), beanName);
+        if (bean != null) {
+            bean = applyBeanPostProcessorsAfterInitialization(bean, beanName);
+        }
+        return bean;
+
+    }
+
+    /**
+     * 判断是否有InstantiationAwareBeanPostProcessor接口的Bean如果有，则执行代理对象生成操作并返回代理对象，否则返回null
+     *
+     * @param beanClass
+     * @param beanName
+     * @return
+     * @throws BeansException
+     */
+    protected Object applyBeanPostProcessorsBeforeInstantiation(Class<?> beanClass, String beanName) throws BeansException {
+        for (BeanPostProcessor beanPostProcessor : getBeanPostProcessors()) {
+            if (beanPostProcessor instanceof InstantiationAwareBeanPostProcessor) {
+                Object result = ((InstantiationAwareBeanPostProcessor) beanPostProcessor).postProcessBeforeInstantiation(beanClass, String.valueOf(beanName));
+                if (result != null) return result;
+            }
+        }
+        return null;
     }
 
     /**
@@ -150,7 +192,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
         Class<?> beanClass = beanDefinition.getBeanClass();
         Constructor<?>[] declaredConstructors = beanClass.getDeclaredConstructors();
         for (Constructor ctor : declaredConstructors) {
-            if (args != null && ctor.getParameterTypes().length == args.length) {
+            if (args != null && args.equals(Optional.empty()) && ctor.getParameterTypes().length == args.length) {
                 constructorToUse = ctor;
                 break;
             }

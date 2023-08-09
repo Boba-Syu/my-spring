@@ -13,7 +13,7 @@ import org.aspectj.weaver.tools.PointcutParser;
 import org.aspectj.weaver.tools.PointcutPrimitive;
 
 /**
- * AspctJ中的校验方法的包装
+ * 切面pointcut，AspctJ中的校验方法的包装
  */
 public class AspectJExpressionPointcut implements Pointcut, ClassFilter, MethodMatcher {
     private static final Set<PointcutPrimitive> SUPPORTED_PRIMITIVES = new HashSet<>();
