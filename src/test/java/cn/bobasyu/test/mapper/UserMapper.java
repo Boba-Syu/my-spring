@@ -1,8 +1,11 @@
 package cn.bobasyu.test.mapper;
 
+import cn.bobasyu.springframework.stereotype.Component;
+
 import java.util.HashMap;
 import java.util.Map;
 
+@Component
 public class UserMapper {
     private static Map<String, String> hashMap = new HashMap<>();
 

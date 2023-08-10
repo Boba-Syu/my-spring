@@ -1,5 +1,6 @@
 package cn.bobasyu.springframework.context.annotation;
 
+import cn.bobasyu.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor;
 import cn.bobasyu.springframework.beans.factory.config.BeanDefinition;
 import cn.bobasyu.springframework.beans.factory.support.BeanDefinitionRegistry;
 import cn.bobasyu.springframework.stereotype.Component;
@@ -19,6 +20,7 @@ public class ClassPathBeanDefinitionScanner extends ClassPathScanningCandidateCo
 
     /**
      * 扫描包下的所有带有@component注解的类，并根据@Scope解析器作用域，以及分析出Bean的名称
+     * 同时处理Bean中的@Autowired等注解
      *
      * @param basePackages 被扫描的包的路径，可以有多个
      */
@@ -35,6 +37,9 @@ public class ClassPathBeanDefinitionScanner extends ClassPathScanningCandidateCo
                 registry.registerBeanDefinition(determineBeanName(beanDefinition), beanDefinition);
             }
         }
+        // 注册internalAutowiredAnnotationProcessor，用于处理@Autowired和@Value注解
+        registry.registerBeanDefinition("cn.bobasyu.springframework.context.annotation.internalAutowiredAnnotationProcessor",
+                new BeanDefinition(AutowiredAnnotationBeanPostProcessor.class));
     }
 
     /**
