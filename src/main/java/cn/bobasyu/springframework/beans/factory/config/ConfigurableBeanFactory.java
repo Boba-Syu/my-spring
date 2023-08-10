@@ -1,6 +1,7 @@
 package cn.bobasyu.springframework.beans.factory.config;
 
 import cn.bobasyu.springframework.beans.factory.HierarchicalBeanFactory;
+import cn.bobasyu.springframework.util.StringValueResolver;
 
 /**
  * 可获取 BeanPostProcessor、BeanClassLoader等的配置化接口
@@ -16,4 +17,18 @@ public interface ConfigurableBeanFactory extends HierarchicalBeanFactory, Single
      * @param beanPostProcessor
      */
     void addBeanPostProcessor(BeanPostProcessor beanPostProcessor);
+
+    /**
+     * 添加字符解析器到容器中
+     *
+     * @param valueResolver
+     */
+    void addEmbeddedValueResolver(StringValueResolver valueResolver);
+
+    /**
+     * 解析属性，使用字符解析器
+     * @param value
+     * @return
+     */
+    String resolveEmbeddedValue(String value);
 }

@@ -1,5 +1,6 @@
 package cn.bobasyu.springframework.beans.factory.support;
 
+import cn.bobasyu.springframework.beans.BeansException;
 import cn.bobasyu.springframework.beans.factory.config.BeanDefinition;
 
 /**
@@ -22,6 +23,14 @@ public interface BeanDefinitionRegistry {
      */
     boolean containsBeanDefinition(String beanName);
 
+    /**
+     * 根据Bean名称查询BeanDefinition
+     *
+     * @param beanName
+     * @return
+     * @throws BeansException
+     */
+    BeanDefinition getBeanDefinition(String beanName) throws BeansException;
 
     /**
      * 返回注册表中所有的Bean名称

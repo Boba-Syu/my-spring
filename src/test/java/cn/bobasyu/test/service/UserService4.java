@@ -1,42 +1,25 @@
 package cn.bobasyu.test.service;
 
+import cn.bobasyu.springframework.beans.factory.annotation.Autowired;
+import cn.bobasyu.springframework.beans.factory.annotation.Value;
 import cn.bobasyu.springframework.stereotype.Component;
+import cn.bobasyu.test.mapper.UserMapper;
 
-import java.util.Random;
 
 @Component("userService")
 public class UserService4 implements IUserService {
-
+    @Value("${token}")
     private String token;
+    @Autowired
+    private UserMapper userMapper;
 
+    @Override
     public String queryUserInfo() {
-        try {
-            Thread.sleep(new Random(1).nextInt(100));
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        return "AAA，1，深圳";
-    }
-
-    public String register(String userName) {
-        try {
-            Thread.sleep(new Random(1).nextInt(100));
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        return "注册用户：" + userName + " success！";
+        return userMapper.queryUserName("1") + ", token=" + token;
     }
 
     @Override
-    public String toString() {
-        return "UserService#token = { " + token + " }";
-    }
-
-    public String getToken() {
-        return token;
-    }
-
-    public void setToken(String token) {
-        this.token = token;
+    public String register(String userName) {
+        return null;
     }
 }

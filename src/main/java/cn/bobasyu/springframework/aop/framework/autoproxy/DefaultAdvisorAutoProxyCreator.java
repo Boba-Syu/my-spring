@@ -1,9 +1,10 @@
-package cn.bobasyu.springframework.aop.framework.autoproy;
+package cn.bobasyu.springframework.aop.framework.autoproxy;
 
 import cn.bobasyu.springframework.aop.*;
 import cn.bobasyu.springframework.aop.aspectj.AspectJExpressionPointcutAdvisor;
 import cn.bobasyu.springframework.aop.framework.ProxyFactory;
 import cn.bobasyu.springframework.beans.BeansException;
+import cn.bobasyu.springframework.beans.PropertyValues;
 import cn.bobasyu.springframework.beans.factory.BeanFactory;
 import cn.bobasyu.springframework.beans.factory.BeanFactoryAware;
 import cn.bobasyu.springframework.beans.factory.config.InstantiationAwareBeanPostProcessor;
@@ -60,6 +61,11 @@ public class DefaultAdvisorAutoProxyCreator implements InstantiationAwareBeanPos
             return new ProxyFactory(advisedSupport).getProxy();
         }
         return null;
+    }
+
+    @Override
+    public PropertyValues postProcessPropertyValues(PropertyValues pvs, Object bean, String beanName) throws BeansException {
+        return pvs;
     }
 
     private boolean isInfrastructureClass(Class<?> beanClass) {

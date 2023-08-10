@@ -3,7 +3,7 @@
 
     <bean id="userService" class="cn.bobasyu.test.service.UserService3"/>
 
-    <bean class="cn.bobasyu.springframework.aop.framework.autoproy.DefaultAdvisorAutoProxyCreator"/>
+    <bean class="cn.bobasyu.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator"/>
 
     <bean id="beforeAdvice" class="cn.bobasyu.test.aop.UserServiceBeforeAdvice"/>
 
