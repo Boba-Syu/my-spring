@@ -32,24 +32,19 @@ public class DefaultAdvisorAutoProxyCreator implements InstantiationAwareBeanPos
 
     @Override
     public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
-        return bean;
-    }
-
-    @Override
-    public Object postProcessBeforeInstantiation(Class<?> beanClass, String beanName) throws BeansException {
-        if (isInfrastructureClass(beanClass)) return null;
+        if (isInfrastructureClass(bean.getClass())) return bean;
 
         Collection<AspectJExpressionPointcutAdvisor> advisors = beanFactory.getBeansOfType(AspectJExpressionPointcutAdvisor.class).values();
 
         for (AspectJExpressionPointcutAdvisor advisor : advisors) {
             ClassFilter classFilter = advisor.getPointcut().getClassFilter();
-            if (!classFilter.matches(beanClass)) continue;
+            if (!classFilter.matches(bean.getClass())) continue;
 
             AdvisedSupport advisedSupport = new AdvisedSupport();
 
             TargetSource targetSource = null;
             try {
-                targetSource = new TargetSource(beanClass.getDeclaredConstructor().newInstance());
+                targetSource = new TargetSource(bean);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -57,10 +52,20 @@ public class DefaultAdvisorAutoProxyCreator implements InstantiationAwareBeanPos
             advisedSupport.setMethodInterceptor((MethodInterceptor) advisor.getAdvice());
             advisedSupport.setMethodMatcher(advisor.getPointcut().getMethodMatcher());
             advisedSupport.setProxyTargetClass(false);
-
+            // 返回代理对象
             return new ProxyFactory(advisedSupport).getProxy();
         }
+        return bean;
+    }
+
+    @Override
+    public Object postProcessBeforeInstantiation(Class<?> beanClass, String beanName) throws BeansException {
         return null;
+    }
+
+    @Override
+    public boolean postProcessAfterInstantiation(Object bean, String beanName) throws BeansException {
+        return true;
     }
 
     @Override
