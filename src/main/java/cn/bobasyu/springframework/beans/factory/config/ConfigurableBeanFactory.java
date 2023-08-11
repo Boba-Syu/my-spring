@@ -1,7 +1,9 @@
 package cn.bobasyu.springframework.beans.factory.config;
 
 import cn.bobasyu.springframework.beans.factory.HierarchicalBeanFactory;
+import cn.bobasyu.springframework.core.convert.ConversionService;
 import cn.bobasyu.springframework.util.StringValueResolver;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * 可获取 BeanPostProcessor、BeanClassLoader等的配置化接口
@@ -27,8 +29,14 @@ public interface ConfigurableBeanFactory extends HierarchicalBeanFactory, Single
 
     /**
      * 解析属性，使用字符解析器
+     *
      * @param value
      * @return
      */
     String resolveEmbeddedValue(String value);
+
+    void setConversionService(ConversionService conversionService);
+
+    @Nullable
+    ConversionService getConversionService();
 }

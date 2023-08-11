@@ -18,7 +18,6 @@ public interface InstantiationAwareBeanPostProcessor extends BeanPostProcessor {
     Object postProcessBeforeInstantiation(Class<?> beanClass, String beanName) throws BeansException;
 
     /**
-     *
      * @param bean
      * @param beanName
      * @return
@@ -36,4 +35,16 @@ public interface InstantiationAwareBeanPostProcessor extends BeanPostProcessor {
      * @throws BeansException
      */
     PropertyValues postProcessPropertyValues(PropertyValues pvs, Object bean, String beanName) throws BeansException;
+
+    /**
+     * 从代理对象中获得未完成实例化的Bean对象，即没有被装配属性的对象
+     * 被InstantiationAwareBeanPostProcessor#getEarlyBeanReference调用
+     *
+     * @param bean
+     * @param beanName
+     * @return
+     */
+    default Object getEarlyBeanReference(Object bean, String beanName) throws BeansException {
+        return bean;
+    }
 }

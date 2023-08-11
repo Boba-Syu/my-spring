@@ -5,10 +5,12 @@ import cn.bobasyu.springframework.beans.PropertyValue;
 import cn.bobasyu.springframework.beans.PropertyValues;
 import cn.bobasyu.springframework.beans.factory.*;
 import cn.bobasyu.springframework.beans.factory.config.*;
+import cn.bobasyu.springframework.core.convert.ConversionService;
 import cn.bobasyu.springframework.util.ClassUtils;
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.util.ClassUtil;
 import cn.hutool.core.util.StrUtil;
+import cn.hutool.core.util.TypeUtil;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
@@ -28,13 +30,20 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
     protected Object createBean(String name, BeanDefinition beanDefinition, Object[] args) throws BeansException {
         Object bean = null;
         try {
-            // 判断是否返回代理 Bean 对象
-            bean = resolveBeforeInstantiation(name, beanDefinition);
-            if (bean != null) {
-                return bean;
-            }
+//            // 判断是否返回代理 Bean 对象
+//            bean = resolveBeforeInstantiation(name, beanDefinition);
+//            if (bean != null) {
+//                return bean;
+//            }
             // 实例化Bean
             bean = createBeanInstance(beanDefinition, name, args);
+
+            // 处理循环依赖，将实例化后的Bean对象提前放入缓存中暴露出来
+            if (beanDefinition.isSingleton()) {
+                Object finalBean = bean;
+                addSingletonFactory(name, () -> getEarlyBeanReference(name, beanDefinition, finalBean));
+            }
+
             // 实例化后判断
             boolean continueWithPropertyPopulation = applyBeanPostProcessorsAfterInstantiation(name, bean);
             if (!continueWithPropertyPopulation) {
@@ -52,10 +61,35 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
         // 注册销毁方法
         registerDisposableBeanIfNecessary(name, bean, beanDefinition);
         // 单例模式则将Bean对象加到内存中，原型模式则不进行该操作，每次都生成新对象
+        Object exposedObject = bean;
         if (beanDefinition.isSingleton()) {
-            registerSingleton(name, bean);
+            // 获取代理对象
+            exposedObject = getSingleton(name);
+            registerSingleton(name, exposedObject);
         }
-        return bean;
+        return exposedObject;
+    }
+
+    /**
+     * 处理循环依赖，
+     *
+     * @param beanName
+     * @param beanDefinition
+     * @param bean
+     * @return
+     * @throws BeansException
+     */
+    private Object getEarlyBeanReference(String beanName, BeanDefinition beanDefinition, Object bean) throws BeansException {
+        Object exposedObject = bean;
+        for (BeanPostProcessor beanPostProcessor : getBeanPostProcessors()) {
+            if (beanPostProcessor instanceof InstantiationAwareBeanPostProcessor) {
+                exposedObject = ((InstantiationAwareBeanPostProcessor) beanPostProcessor).getEarlyBeanReference(exposedObject, beanName);
+                if (exposedObject == null) {
+                    return exposedObject;
+                }
+            }
+        }
+        return exposedObject;
     }
 
     /**
@@ -270,6 +304,16 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
                     // 获取属性的实例化
                     BeanReference beanReference = (BeanReference) value;
                     value = getBean(beanReference.getBeanName());
+                } else {
+                    // 类型转换, 将其转换为接口的类型，匹配接口
+                    Class<?> sourceType = value.getClass();
+                    Class<?> targetType = (Class<?>) TypeUtil.getFieldType(bean.getClass(), beanName);
+                    ConversionService conversionService = getConversionService();
+                    if (conversionService != null) {
+                        if (conversionService.canConvert(sourceType, targetType)) {
+                            value = conversionService.convert(value, targetType);
+                        }
+                    }
                 }
                 // 填充属性
                 BeanUtil.setFieldValue(bean, propertyName, value);

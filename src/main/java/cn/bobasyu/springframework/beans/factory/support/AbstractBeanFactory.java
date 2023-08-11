@@ -5,6 +5,7 @@ import cn.bobasyu.springframework.beans.factory.config.BeanDefinition;
 import cn.bobasyu.springframework.beans.BeansException;
 import cn.bobasyu.springframework.beans.factory.config.BeanPostProcessor;
 import cn.bobasyu.springframework.beans.factory.config.ConfigurableBeanFactory;
+import cn.bobasyu.springframework.core.convert.ConversionService;
 import cn.bobasyu.springframework.util.StringValueResolver;
 
 import java.util.ArrayList;
@@ -22,6 +23,8 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
      * 字符解析器容器
      */
     private final List<StringValueResolver> embeddedValueResolvers = new ArrayList<>();
+
+    private ConversionService conversionService;
 
     @Override
     public Object getBean(String name) throws BeansException {
@@ -111,5 +114,15 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
             result = resolver.resolveStringValue(result);
         }
         return result;
+    }
+
+    @Override
+    public void setConversionService(ConversionService conversionService) {
+        this.conversionService = conversionService;
+    }
+
+    @Override
+    public ConversionService getConversionService() {
+        return this.conversionService;
     }
 }

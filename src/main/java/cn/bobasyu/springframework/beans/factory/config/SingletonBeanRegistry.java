@@ -14,7 +14,7 @@ public interface SingletonBeanRegistry {
      * @param beanName Bean对象的名称
      * @return
      */
-    Object getSingleton(String beanName);
+    Object getSingleton(String beanName) throws BeansException;
 
     /**
      * 单例对象销毁方法
