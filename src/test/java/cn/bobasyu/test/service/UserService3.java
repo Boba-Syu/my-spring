@@ -11,6 +11,7 @@ public class UserService3 implements IUserService {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+        System.out.println("方法执行");
         return "Hello world";
     }
 
