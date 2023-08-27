@@ -85,6 +85,7 @@ public class AopTest {
     public void aopBeforeTest() throws BeansException {
         ApplicationContext applicationContext = new ClassPathXmlApplicationContext("classpath:spring5.xml");
         IUserService userService = applicationContext.getBean("userService", IUserService.class);
-        System.out.println(userService.queryUserInfo());
+        userService.queryUserInfo();
+//        System.out.println(userService.queryUserInfo());
     }
 }
